@@ -1,0 +1,147 @@
+Классы Algebra, Geometry, Physics — содержат статические методы, которые решают задачи из соответствующих областей.
+В Algebra — решение квадратных уравнений и теорема Виета.
+В Geometry — расчет площадей и периметров фигур.
+В Physics — закон Ома, расчет сопротивления, законы движения.
+В Program.Main() — простой пример использования методов из этих классов.
+Комментарии после каждой важной строки объясняют, что она делает
+// Подключаем базовые пространства имен
+using System;
+using System.Collections.Generic;
+using System.Linq; // Для метода Sum
+
+// Класс с математическими функциями (алгебра)
+public static class Algebra
+{
+    // Метод решения квадратного уравнения ax² + bx + c = 0
+    // Возвращает корни через out параметры (nullable double)
+    public static void SolveQuadratic(double a, double b, double c,
+                                      out double? x1, out double? x2)
+    {
+        // Инициализируем корни null
+        x1 = x2 = null;
+
+        // Вычисляем дискриминант D = b² - 4ac
+        double discriminant = b * b - 4 * a * c;
+
+        // Если дискриминант > 0 — два корня
+        if (discriminant > 0)
+        {
+            x1 = (-b + Math.Sqrt(discriminant)) / (2 * a);
+            x2 = (-b - Math.Sqrt(discriminant)) / (2 * a);
+        }
+        // Если дискриминант = 0 — один корень (двукратный)
+        else if (discriminant == 0)
+        {
+            x1 = x2 = -b / (2 * a);
+        }
+        // Если дискриминант < 0 — корней нет (останутся null)
+    }
+
+    // Метод, вычисляющий сумму и произведение корней по теореме Виета
+    // Возвращает кортеж (sum, product)
+    public static (double sum, double product) VietasFormulas(double a, double b, double c)
+    {
+        return (-b / a, c / a);
+    }
+}
+
+// Класс с геометрическими расчетами
+public static class Geometry
+{
+    // Площадь квадрата
+    public static double SquareArea(double side) => side * side;
+
+    // Периметр квадрата
+    public static double SquarePerimeter(double side) => 4 * side;
+
+    // Площадь произвольного треугольника по формуле Герона
+    public static double TriangleArea(double a, double b, double c)
+    {
+        double p = (a + b + c) / 2;  // Полупериметр
+        return Math.Sqrt(p * (p - a) * (p - b) * (p - c));
+    }
+
+    // Площадь прямоугольника
+    public static double RectangleArea(double width, double height) => width * height;
+
+    // Периметр прямоугольника
+    public static double RectanglePerimeter(double width, double height) => 2 * (width + height);
+
+    // Площадь круга
+    public static double CircleArea(double radius) => Math.PI * radius * radius;
+
+    // Длина окружности
+    public static double CircleCircumference(double radius) => 2 * Math.PI * radius;
+}
+
+// Класс с физическими расчетами
+public static class Physics
+{
+    // Закон Ома: рассчитывает напряжение, ток или сопротивление
+    // Если voltage=0, возвращает U=I*R
+    // Если current=0, возвращает I=U/R
+    // Иначе возвращает R=U/I
+    public static double OhmLaw(double voltage, double current, double resistance)
+    {
+        if (voltage == 0)
+            return current * resistance;
+        if (current == 0)
+            return voltage / resistance;
+        return voltage / current;
+    }
+
+    // Расчет общего сопротивления резисторов
+    // Если parallel == true — для параллельного соединения
+    // Иначе — последовательного (суммируем сопротивления)
+    public static double CalculateResistance(List<double> resistors, bool parallel = false)
+    {
+        if (parallel)
+            return 1 / resistors.Sum(r => 1 / r);
+        return resistors.Sum();
+    }
+
+    // Вложенный класс с законами движения
+    public static class Motion
+    {
+        // Равномерное движение: путь = скорость * время
+        public static double UniformMotion(double speed, double time) => speed * time;
+
+        // Равноускоренное движение: s = v0*t + 0.5*a*t²
+        public static double AcceleratedMotion(double v0, double a, double t) =>
+            v0 * t + 0.5 * a * t * t;
+
+        // Движение по окружности: длина окружности / угловая скорость
+        public static double CircularMotion(double radius, double angularVelocity) =>
+            2 * Math.PI * radius / angularVelocity;
+
+        // Свободное падение: s = 0.5 * g * t², g ≈ 9.81 м/с²
+        public static double FreeFall(double time) => 0.5 * 9.81 * time * time;
+    }
+}
+
+// Главный класс программы
+public class Program
+{
+    // Точка входа
+    public static void Main()
+    {
+        // Пример решения квадратного уравнения x² - 5x + 6 = 0
+        Algebra.SolveQuadratic(1, -5, 6, out var x1, out var x2);
+        Console.WriteLine($"Корни уравнения: {x1}, {x2}");
+
+        // Пример вычисления площади круга с радиусом 5
+        Console.WriteLine($"Площадь круга: {Geometry.CircleArea(5):F2}");
+
+        // Создаем список сопротивлений
+        var resistors = new List<double> { 10, 20, 30 };
+
+        // Вычисляем общее сопротивление последовательного соединения
+        Console.WriteLine($"Общее сопротивление (последовательное): {Physics.CalculateResistance(resistors)}");
+
+        // Вычисляем общее сопротивление параллельного соединения
+        Console.WriteLine($"Общее сопротивление (параллельное): {Physics.CalculateResistance(resistors, true):F2}");
+
+        // Вычисляем путь свободного падения за 2.5 секунды
+        Console.WriteLine($"Путь при свободном падении: {Physics.Motion.FreeFall(2.5):F2}");
+    }
+}
